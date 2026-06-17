@@ -226,59 +226,33 @@ def main():
     print("POOLED SAMPLE COVARIANCE DETERMINANT CALCULATOR")
     print("="*70)
     
-    # Example: Create sample data
-    print("\nUsing example data with compatible dimensions...\n")
-    
-    # Create example data with same number of variables
-    np.random.seed(42)
-    
-    # Group 1: 20 observations, 3 variables
-    group1_data = np.random.multivariate_normal(
-        mean=[0, 0, 0],
-        cov=[[1.0, 0.2, 0.1],
-             [0.2, 1.5, 0.3],
-             [0.1, 0.3, 1.2]],
-        size=20
-    )
-    
-    # Group 2: 25 observations, 3 variables
-    group2_data = np.random.multivariate_normal(
-        mean=[1, 1, 1],
-        cov=[[1.2, 0.15, 0.2],
-             [0.15, 1.3, 0.25],
-             [0.2, 0.25, 1.4]],
-        size=25
-    )
-    
-    # Group 3: 18 observations, 3 variables
-    group3_data = np.random.multivariate_normal(
-        mean=[-1, 0.5, -0.5],
-        cov=[[0.9, 0.1, 0.05],
-             [0.1, 1.1, 0.2],
-             [0.05, 0.2, 1.0]],
-        size=18
-    )
+    # ========== EDIT THIS SECTION: Specify which datasets to use ==========
+    # Add or remove dataset paths as needed
+    DATASETS = [
+    "Data/Exam2026Data4a.tsv",
+    "Data/Exam2026Data4b.tsv",
+    "Data/Exam2026Data4c.tsv",
+    "Data/Exam2026Data4d.tsv",
+]
+    # ======================================================================
     
     calc = PooledSampleCovariance()
-    calc.add_group("Group1", group1_data)
-    calc.add_group("Group2", group2_data)
-    calc.add_group("Group3", group3_data)
     
+    # Load datasets
+    for i, filepath in enumerate(DATASETS, 1):
+        try:
+            group_name = f"Group{i}"
+            calc.add_group_from_file(group_name, filepath)
+            print(f"✓ Loaded {filepath} as {group_name}")
+        except FileNotFoundError:
+            print(f"✗ Error: Could not find {filepath}")
+            return
+        except Exception as e:
+            print(f"✗ Error loading {filepath}: {e}")
+            return
+    
+    print()
     calc.print_summary()
-    
-    print("\n" + "="*70)
-    print("ALTERNATIVE: Load from TSV files")
-    print("="*70)
-    print("""
-To use your own data files:
-
-    calc = PooledSampleCovariance()
-    calc.add_group_from_file("Group1", "Data/Exam2026data1.tsv")
-    calc.add_group_from_file("Group2", "Data/Exam2026data3.tsv")
-    calc.add_group_from_file("Group3", "Data/Exam2026data4a.tsv")
-    
-NOTE: All files must have the same number of columns (variables)!
-    """)
 
 
 if __name__ == "__main__":
